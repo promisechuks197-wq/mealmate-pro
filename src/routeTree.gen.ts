@@ -14,9 +14,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated/recipes'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedPlanRouteImport } from './routes/_authenticated/plan'
 import { Route as AuthenticatedInventoryRouteImport } from './routes/_authenticated/inventory'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedGroceryRouteImport } from './routes/_authenticated/grocery'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated/add'
 
@@ -44,6 +46,11 @@ const AuthenticatedRecipesRoute = AuthenticatedRecipesRouteImport.update({
   path: '/recipes',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedPlanRoute = AuthenticatedPlanRouteImport.update({
   id: '/plan',
   path: '/plan',
@@ -57,6 +64,11 @@ const AuthenticatedInventoryRoute = AuthenticatedInventoryRouteImport.update({
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedGroceryRoute = AuthenticatedGroceryRouteImport.update({
+  id: '/grocery',
+  path: '/grocery',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -76,9 +88,11 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/add': typeof AuthenticatedAddRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/grocery': typeof AuthenticatedGroceryRoute
   '/home': typeof AuthenticatedHomeRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/plan': typeof AuthenticatedPlanRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
 }
 export interface FileRoutesByTo {
@@ -87,9 +101,11 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/add': typeof AuthenticatedAddRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/grocery': typeof AuthenticatedGroceryRoute
   '/home': typeof AuthenticatedHomeRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/plan': typeof AuthenticatedPlanRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
 }
 export interface FileRoutesById {
@@ -100,9 +116,11 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/grocery': typeof AuthenticatedGroceryRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
 }
 export interface FileRouteTypes {
@@ -113,9 +131,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/add'
     | '/admin'
+    | '/grocery'
     | '/home'
     | '/inventory'
     | '/plan'
+    | '/profile'
     | '/recipes'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -124,9 +144,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/add'
     | '/admin'
+    | '/grocery'
     | '/home'
     | '/inventory'
     | '/plan'
+    | '/profile'
     | '/recipes'
   id:
     | '__root__'
@@ -136,9 +158,11 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/add'
     | '/_authenticated/admin'
+    | '/_authenticated/grocery'
     | '/_authenticated/home'
     | '/_authenticated/inventory'
     | '/_authenticated/plan'
+    | '/_authenticated/profile'
     | '/_authenticated/recipes'
   fileRoutesById: FileRoutesById
 }
@@ -186,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRecipesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/plan': {
       id: '/_authenticated/plan'
       path: '/plan'
@@ -205,6 +236,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/grocery': {
+      id: '/_authenticated/grocery'
+      path: '/grocery'
+      fullPath: '/grocery'
+      preLoaderRoute: typeof AuthenticatedGroceryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin': {
@@ -227,18 +265,22 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedAddRoute: typeof AuthenticatedAddRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedGroceryRoute: typeof AuthenticatedGroceryRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
   AuthenticatedPlanRoute: typeof AuthenticatedPlanRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddRoute: AuthenticatedAddRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedGroceryRoute: AuthenticatedGroceryRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
   AuthenticatedPlanRoute: AuthenticatedPlanRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
 }
 
