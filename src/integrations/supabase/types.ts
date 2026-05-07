@@ -14,16 +14,239 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      grocery_list: {
+        Row: {
+          checked: boolean
+          created_at: string
+          id: string
+          item_name: string
+          qty: number
+          source_recipe_id: string | null
+          unit: string
+          user_id: string
+        }
+        Insert: {
+          checked?: boolean
+          created_at?: string
+          id?: string
+          item_name: string
+          qty?: number
+          source_recipe_id?: string | null
+          unit?: string
+          user_id: string
+        }
+        Update: {
+          checked?: boolean
+          created_at?: string
+          id?: string
+          item_name?: string
+          qty?: number
+          source_recipe_id?: string | null
+          unit?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grocery_list_source_recipe_id_fkey"
+            columns: ["source_recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory: {
+        Row: {
+          category: Database["public"]["Enums"]["inventory_category"]
+          created_at: string
+          expiry_date: string | null
+          id: string
+          item_name: string
+          qty: number
+          unit: string
+          user_id: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["inventory_category"]
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_name: string
+          qty?: number
+          unit?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["inventory_category"]
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_name?: string
+          qty?: number
+          unit?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      meal_plan: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          meal_slot: Database["public"]["Enums"]["meal_slot"]
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          meal_slot: Database["public"]["Enums"]["meal_slot"]
+          recipe_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          meal_slot?: Database["public"]["Enums"]["meal_slot"]
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plan_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      recipe_ingredients: {
+        Row: {
+          id: string
+          item_name: string
+          qty: number
+          recipe_id: string
+          unit: string
+        }
+        Insert: {
+          id?: string
+          item_name: string
+          qty?: number
+          recipe_id: string
+          unit?: string
+        }
+        Update: {
+          id?: string
+          item_name?: string
+          qty?: number
+          recipe_id?: string
+          unit?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string | null
+          instructions: string | null
+          prep_time_minutes: number
+          tags: string[]
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          prep_time_minutes?: number
+          tags?: string[]
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          instructions?: string | null
+          prep_time_minutes?: number
+          tags?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin"
+      inventory_category: "fridge" | "pantry" | "freezer"
+      meal_slot: "breakfast" | "lunch" | "dinner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +373,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin"],
+      inventory_category: ["fridge", "pantry", "freezer"],
+      meal_slot: ["breakfast", "lunch", "dinner"],
+    },
   },
 } as const
