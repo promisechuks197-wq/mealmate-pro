@@ -1,13 +1,14 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Home, Calendar, Plus, ChefHat, User } from "lucide-react";
 
-const tabs = [
+type Tab = { to: "/home" | "/plan" | "/add" | "/recipes" | "/profile"; icon: typeof Home; label: string; primary?: boolean };
+const tabs: Tab[] = [
   { to: "/home", icon: Home, label: "Home" },
   { to: "/plan", icon: Calendar, label: "Plan" },
   { to: "/add", icon: Plus, label: "Add", primary: true },
   { to: "/recipes", icon: ChefHat, label: "Recipes" },
   { to: "/profile", icon: User, label: "Profile" },
-] as const;
+];
 
 export function BottomNav() {
   const loc = useLocation();
