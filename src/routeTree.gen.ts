@@ -21,6 +21,8 @@ import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedGroceryRouteImport } from './routes/_authenticated/grocery'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated/add'
+import { Route as AuthenticatedAdminRecipesRouteImport } from './routes/_authenticated/admin/recipes'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -81,32 +83,48 @@ const AuthenticatedAddRoute = AuthenticatedAddRouteImport.update({
   path: '/add',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminRecipesRoute =
+  AuthenticatedAdminRecipesRouteImport.update({
+    id: '/recipes',
+    path: '/recipes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/add': typeof AuthenticatedAddRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/grocery': typeof AuthenticatedGroceryRoute
   '/home': typeof AuthenticatedHomeRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/plan': typeof AuthenticatedPlanRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/recipes': typeof AuthenticatedAdminRecipesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/add': typeof AuthenticatedAddRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/grocery': typeof AuthenticatedGroceryRoute
   '/home': typeof AuthenticatedHomeRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/plan': typeof AuthenticatedPlanRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/recipes': typeof AuthenticatedAdminRecipesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,13 +133,15 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_authenticated/add': typeof AuthenticatedAddRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/grocery': typeof AuthenticatedGroceryRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/plan': typeof AuthenticatedPlanRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/recipes': typeof AuthenticatedAdminRecipesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +157,8 @@ export interface FileRouteTypes {
     | '/plan'
     | '/profile'
     | '/recipes'
+    | '/admin/dashboard'
+    | '/admin/recipes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,6 +172,8 @@ export interface FileRouteTypes {
     | '/plan'
     | '/profile'
     | '/recipes'
+    | '/admin/dashboard'
+    | '/admin/recipes'
   id:
     | '__root__'
     | '/'
@@ -164,6 +188,8 @@ export interface FileRouteTypes {
     | '/_authenticated/plan'
     | '/_authenticated/profile'
     | '/_authenticated/recipes'
+    | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/recipes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -259,12 +285,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAddRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/recipes': {
+      id: '/_authenticated/admin/recipes'
+      path: '/recipes'
+      fullPath: '/admin/recipes'
+      preLoaderRoute: typeof AuthenticatedAdminRecipesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminRecipesRoute: typeof AuthenticatedAdminRecipesRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminRecipesRoute: AuthenticatedAdminRecipesRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAddRoute: typeof AuthenticatedAddRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedGroceryRoute: typeof AuthenticatedGroceryRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedInventoryRoute: typeof AuthenticatedInventoryRoute
@@ -275,7 +328,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAddRoute: AuthenticatedAddRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedGroceryRoute: AuthenticatedGroceryRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedInventoryRoute: AuthenticatedInventoryRoute,
