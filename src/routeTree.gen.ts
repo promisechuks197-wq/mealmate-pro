@@ -22,8 +22,12 @@ import { Route as AuthenticatedGroceryRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAddRouteImport } from './routes/_authenticated/add'
 import { Route as AuthenticatedRecipesIdRouteImport } from './routes/_authenticated/recipes.$id'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminRecipesRouteImport } from './routes/_authenticated/admin/recipes'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
+import { Route as AuthenticatedAdminUsersIdRouteImport } from './routes/_authenticated/admin/users.$id'
+import { Route as AuthenticatedAdminRecipesNewRouteImport } from './routes/_authenticated/admin/recipes.new'
+import { Route as AuthenticatedAdminRecipesIdRouteImport } from './routes/_authenticated/admin/recipes.$id'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -89,6 +93,11 @@ const AuthenticatedRecipesIdRoute = AuthenticatedRecipesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedRecipesRoute,
 } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminRecipesRoute =
   AuthenticatedAdminRecipesRouteImport.update({
     id: '/recipes',
@@ -100,6 +109,24 @@ const AuthenticatedAdminDashboardRoute =
     id: '/dashboard',
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsersIdRoute =
+  AuthenticatedAdminUsersIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminUsersRoute,
+  } as any)
+const AuthenticatedAdminRecipesNewRoute =
+  AuthenticatedAdminRecipesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminRecipesRoute,
+  } as any)
+const AuthenticatedAdminRecipesIdRoute =
+  AuthenticatedAdminRecipesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminRecipesRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -115,8 +142,12 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/recipes': typeof AuthenticatedAdminRecipesRoute
+  '/admin/recipes': typeof AuthenticatedAdminRecipesRouteWithChildren
+  '/admin/users': typeof AuthenticatedAdminUsersRouteWithChildren
   '/recipes/$id': typeof AuthenticatedRecipesIdRoute
+  '/admin/recipes/$id': typeof AuthenticatedAdminRecipesIdRoute
+  '/admin/recipes/new': typeof AuthenticatedAdminRecipesNewRoute
+  '/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -131,8 +162,12 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/recipes': typeof AuthenticatedAdminRecipesRoute
+  '/admin/recipes': typeof AuthenticatedAdminRecipesRouteWithChildren
+  '/admin/users': typeof AuthenticatedAdminUsersRouteWithChildren
   '/recipes/$id': typeof AuthenticatedRecipesIdRoute
+  '/admin/recipes/$id': typeof AuthenticatedAdminRecipesIdRoute
+  '/admin/recipes/new': typeof AuthenticatedAdminRecipesNewRoute
+  '/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,8 +184,12 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/_authenticated/admin/recipes': typeof AuthenticatedAdminRecipesRoute
+  '/_authenticated/admin/recipes': typeof AuthenticatedAdminRecipesRouteWithChildren
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRouteWithChildren
   '/_authenticated/recipes/$id': typeof AuthenticatedRecipesIdRoute
+  '/_authenticated/admin/recipes/$id': typeof AuthenticatedAdminRecipesIdRoute
+  '/_authenticated/admin/recipes/new': typeof AuthenticatedAdminRecipesNewRoute
+  '/_authenticated/admin/users/$id': typeof AuthenticatedAdminUsersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,7 +207,11 @@ export interface FileRouteTypes {
     | '/recipes'
     | '/admin/dashboard'
     | '/admin/recipes'
+    | '/admin/users'
     | '/recipes/$id'
+    | '/admin/recipes/$id'
+    | '/admin/recipes/new'
+    | '/admin/users/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -184,7 +227,11 @@ export interface FileRouteTypes {
     | '/recipes'
     | '/admin/dashboard'
     | '/admin/recipes'
+    | '/admin/users'
     | '/recipes/$id'
+    | '/admin/recipes/$id'
+    | '/admin/recipes/new'
+    | '/admin/users/$id'
   id:
     | '__root__'
     | '/'
@@ -201,7 +248,11 @@ export interface FileRouteTypes {
     | '/_authenticated/recipes'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/recipes'
+    | '/_authenticated/admin/users'
     | '/_authenticated/recipes/$id'
+    | '/_authenticated/admin/recipes/$id'
+    | '/_authenticated/admin/recipes/new'
+    | '/_authenticated/admin/users/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -304,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRecipesIdRouteImport
       parentRoute: typeof AuthenticatedRecipesRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/recipes': {
       id: '/_authenticated/admin/recipes'
       path: '/recipes'
@@ -318,17 +376,70 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/users/$id': {
+      id: '/_authenticated/admin/users/$id'
+      path: '/$id'
+      fullPath: '/admin/users/$id'
+      preLoaderRoute: typeof AuthenticatedAdminUsersIdRouteImport
+      parentRoute: typeof AuthenticatedAdminUsersRoute
+    }
+    '/_authenticated/admin/recipes/new': {
+      id: '/_authenticated/admin/recipes/new'
+      path: '/new'
+      fullPath: '/admin/recipes/new'
+      preLoaderRoute: typeof AuthenticatedAdminRecipesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRecipesRoute
+    }
+    '/_authenticated/admin/recipes/$id': {
+      id: '/_authenticated/admin/recipes/$id'
+      path: '/$id'
+      fullPath: '/admin/recipes/$id'
+      preLoaderRoute: typeof AuthenticatedAdminRecipesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRecipesRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRecipesRouteChildren {
+  AuthenticatedAdminRecipesIdRoute: typeof AuthenticatedAdminRecipesIdRoute
+  AuthenticatedAdminRecipesNewRoute: typeof AuthenticatedAdminRecipesNewRoute
+}
+
+const AuthenticatedAdminRecipesRouteChildren: AuthenticatedAdminRecipesRouteChildren =
+  {
+    AuthenticatedAdminRecipesIdRoute: AuthenticatedAdminRecipesIdRoute,
+    AuthenticatedAdminRecipesNewRoute: AuthenticatedAdminRecipesNewRoute,
+  }
+
+const AuthenticatedAdminRecipesRouteWithChildren =
+  AuthenticatedAdminRecipesRoute._addFileChildren(
+    AuthenticatedAdminRecipesRouteChildren,
+  )
+
+interface AuthenticatedAdminUsersRouteChildren {
+  AuthenticatedAdminUsersIdRoute: typeof AuthenticatedAdminUsersIdRoute
+}
+
+const AuthenticatedAdminUsersRouteChildren: AuthenticatedAdminUsersRouteChildren =
+  {
+    AuthenticatedAdminUsersIdRoute: AuthenticatedAdminUsersIdRoute,
+  }
+
+const AuthenticatedAdminUsersRouteWithChildren =
+  AuthenticatedAdminUsersRoute._addFileChildren(
+    AuthenticatedAdminUsersRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
-  AuthenticatedAdminRecipesRoute: typeof AuthenticatedAdminRecipesRoute
+  AuthenticatedAdminRecipesRoute: typeof AuthenticatedAdminRecipesRouteWithChildren
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRouteWithChildren
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
-  AuthenticatedAdminRecipesRoute: AuthenticatedAdminRecipesRoute,
+  AuthenticatedAdminRecipesRoute: AuthenticatedAdminRecipesRouteWithChildren,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRouteWithChildren,
 }
 
 const AuthenticatedAdminRouteWithChildren =

@@ -15,39 +15,16 @@ function Inventory() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["inventory", user!.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("inventory")
-        .select("*")
-        .eq("user_id", user!.id)
-        .order("expiry_date", { ascending: true, nullsFirst: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () => (await supabase.from("inventory").select("*").eq("user_id", user!.id).order("expiry_date", { ascending: true, nullsFirst: false })).data ?? [],
   });
-
   const del = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("inventory").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["inventory", user!.id] });
-      toast.success("Removed");
-    },
+    mutationFn: async (id: string) => { await supabase.from("inventory").delete().eq("id", id); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["inventory", user!.id] }); toast.success("Removed"); },
   });
-
   return (
     <>
-      <ScreenHeader
-        subtitle="What's in your kitchen"
-        title="Inventory"
-        right={
-          <Link to="/add" className="size-10 rounded-full bg-primary text-primary-foreground grid place-items-center">
-            <Plus className="size-5" />
-          </Link>
-        }
-      />
+      <ScreenHeader subtitle="What's in your kitchen" title="Inventory"
+        right={<Link to="/add" className="size-10 rounded-full bg-primary text-primary-foreground grid place-items-center"><Plus className="size-5" /></Link>} />
       <div className="px-5 space-y-2">
         {isLoading && <div className="text-sm text-muted-foreground">Loading…</div>}
         {!isLoading && (data?.length ?? 0) === 0 && (
@@ -65,20 +42,13 @@ function Inventory() {
                 <div className="text-xs text-muted-foreground">
                   {item.qty} {item.unit} · {item.category}
                   {item.expiry_date && (
-                    <span className={
-                      status === "expired" ? " text-destructive font-semibold" :
-                      status === "soon" ? " text-destructive" : ""
-                    }>
-                      {" · "}
-                      {status === "expired" ? "Expired " : "Use by "}
-                      {format(parseISO(item.expiry_date), "MMM d")}
+                    <span className={status === "expired" ? " text-destructive font-semibold" : status === "soon" ? " text-destructive" : ""}>
+                      {" · "}{status === "expired" ? "Expired " : "Use by "}{format(parseISO(item.expiry_date), "MMM d")}
                     </span>
                   )}
                 </div>
               </div>
-              <button onClick={() => del.mutate(item.id)} className="text-muted-foreground hover:text-destructive p-2" aria-label="Remove">
-                <Trash2 className="size-4" />
-              </button>
+              <button onClick={() => del.mutate(item.id)} className="text-muted-foreground hover:text-destructive p-2" aria-label="Remove"><Trash2 className="size-4" /></button>
             </div>
           );
         })}
