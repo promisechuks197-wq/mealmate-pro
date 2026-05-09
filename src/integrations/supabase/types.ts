@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      favourites: {
+        Row: {
+          created_at: string
+          id: string
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recipe_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       grocery_list: {
         Row: {
           checked: boolean
@@ -178,32 +199,44 @@ export type Database = {
       }
       recipes: {
         Row: {
+          base_servings: number
           created_at: string
           created_by: string | null
+          difficulty: string
           id: string
           image_url: string | null
           instructions: string | null
+          meal_type: string | null
           prep_time_minutes: number
+          spice_level: string
           tags: string[]
           title: string
         }
         Insert: {
+          base_servings?: number
           created_at?: string
           created_by?: string | null
+          difficulty?: string
           id?: string
           image_url?: string | null
           instructions?: string | null
+          meal_type?: string | null
           prep_time_minutes?: number
+          spice_level?: string
           tags?: string[]
           title: string
         }
         Update: {
+          base_servings?: number
           created_at?: string
           created_by?: string | null
+          difficulty?: string
           id?: string
           image_url?: string | null
           instructions?: string | null
+          meal_type?: string | null
           prep_time_minutes?: number
+          spice_level?: string
           tags?: string[]
           title?: string
         }
