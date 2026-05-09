@@ -7,6 +7,9 @@ import { Plus, Trash2 } from "lucide-react";
 
 type Ing = { id?: string; item_name: string; qty: number; unit: string };
 const TAGS = ["quick","vegetarian","low_carb","gluten_free"];
+const MEAL_TYPES = ["breakfast","lunch","dinner"] as const;
+const DIFFICULTIES = ["Easy","Medium","Hard"] as const;
+const SPICE_LEVELS = ["Mild","Medium","Hot"] as const;
 
 export function RecipeForm({ recipeId }: { recipeId?: string }) {
   const { user } = useAuth();
@@ -14,6 +17,10 @@ export function RecipeForm({ recipeId }: { recipeId?: string }) {
   const [title, setTitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [prep, setPrep] = useState(15);
+  const [mealType, setMealType] = useState<typeof MEAL_TYPES[number]>("lunch");
+  const [difficulty, setDifficulty] = useState<typeof DIFFICULTIES[number]>("Easy");
+  const [spiceLevel, setSpiceLevel] = useState<typeof SPICE_LEVELS[number]>("Mild");
+  const [baseServings, setBaseServings] = useState(4);
   const [instructions, setInstructions] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [ings, setIngs] = useState<Ing[]>([{ item_name: "", qty: 1, unit: "pcs" }]);
@@ -24,6 +31,10 @@ export function RecipeForm({ recipeId }: { recipeId?: string }) {
     supabase.from("recipes").select("*, recipe_ingredients(*)").eq("id", recipeId).maybeSingle().then(({ data }) => {
       if (!data) return;
       setTitle(data.title); setImageUrl(data.image_url ?? ""); setPrep(data.prep_time_minutes);
+      setMealType((data.meal_type as any) ?? "lunch");
+      setDifficulty((data.difficulty as any) ?? "Easy");
+      setSpiceLevel((data.spice_level as any) ?? "Mild");
+      setBaseServings(data.base_servings ?? 4);
       setInstructions(data.instructions ?? ""); setTags(data.tags ?? []);
       setIngs((data.recipe_ingredients as any[]).map((i) => ({ id: i.id, item_name: i.item_name, qty: Number(i.qty), unit: i.unit })));
     });
@@ -40,7 +51,11 @@ export function RecipeForm({ recipeId }: { recipeId?: string }) {
     e.preventDefault(); setBusy(true);
     try {
       let id = recipeId;
-      const payload = { title, image_url: imageUrl || null, prep_time_minutes: prep, instructions, tags, created_by: user!.id };
+      const payload = {
+        title, image_url: imageUrl || null, prep_time_minutes: prep,
+        meal_type: mealType, difficulty, spice_level: spiceLevel, base_servings: baseServings,
+        instructions, tags, created_by: user!.id,
+      };
       if (id) {
         const { error } = await supabase.from("recipes").update(payload).eq("id", id); if (error) throw error;
         await supabase.from("recipe_ingredients").delete().eq("recipe_id", id);
@@ -61,7 +76,13 @@ export function RecipeForm({ recipeId }: { recipeId?: string }) {
         {imageUrl && <img src={imageUrl} alt="" className="mt-1 w-full h-40 object-cover rounded-2xl" />}
         <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} className="mt-2 text-sm" />
       </div>
-      <F label="Prep time (min)" type="number" value={String(prep)} onChange={(v) => setPrep(Number(v))} />
+      <div className="grid grid-cols-2 gap-3">
+        <F label="Prep time (min)" type="number" value={String(prep)} onChange={(v: string) => setPrep(Number(v))} />
+        <F label="Base servings" type="number" value={String(baseServings)} onChange={(v: string) => setBaseServings(Number(v))} />
+      </div>
+      <Pills label="Meal type" options={MEAL_TYPES as unknown as string[]} value={mealType} onChange={(v) => setMealType(v as any)} />
+      <Pills label="Difficulty" options={DIFFICULTIES as unknown as string[]} value={difficulty} onChange={(v) => setDifficulty(v as any)} />
+      <Pills label="Spice level" options={SPICE_LEVELS as unknown as string[]} value={spiceLevel} onChange={(v) => setSpiceLevel(v as any)} />
       <div>
         <span className="text-xs uppercase tracking-wide text-muted-foreground">Tags</span>
         <div className="flex flex-wrap gap-2 mt-1">
@@ -100,4 +121,18 @@ export function RecipeForm({ recipeId }: { recipeId?: string }) {
 function F({ label, value, onChange, type = "text", required }: any) {
   return (<label className="block"><span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
     <input type={type} required={required} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-2xl border border-border bg-card outline-none focus:border-primary" /></label>);
+}
+
+function Pills({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
+      <div className="flex flex-wrap gap-2 mt-1">
+        {options.map((o) => (
+          <button key={o} type="button" onClick={() => onChange(o)}
+            className={`px-3 py-1.5 rounded-full text-sm capitalize ${value === o ? "bg-primary text-primary-foreground" : "bg-card"}`}>{o}</button>
+        ))}
+      </div>
+    </div>
+  );
 }
