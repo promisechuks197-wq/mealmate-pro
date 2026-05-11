@@ -242,6 +242,36 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          recipe_id: string
+          reviewer_name: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          recipe_id: string
+          reviewer_name: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          recipe_id?: string
+          reviewer_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

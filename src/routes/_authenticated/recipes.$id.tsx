@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { normalize } from "@/lib/inventory-helpers";
 import { ChevronLeft, Check, X, ShoppingBasket, Utensils, CalendarPlus, Heart, Minus, Plus, Flame, Clock } from "lucide-react";
+import { CookTimer } from "@/components/CookTimer";
+import { Reviews } from "@/components/Reviews";
 import { toast } from "sonner";
 import { useState } from "react";
 import { format } from "date-fns";
@@ -136,6 +138,10 @@ function RecipeDetail() {
           })}
         </ul>
         {(r as any).instructions && (<><h2 className="font-serif text-xl mt-6">Instructions</h2><p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{(r as any).instructions}</p></>)}
+        <div className="mt-6">
+          <CookTimer totalMinutes={r.prep_time_minutes} dishName={r.title} />
+        </div>
+        <Reviews recipeId={id} />
         <div className="mt-6 grid grid-cols-3 gap-2">
           <button onClick={() => cook.mutate()} className="py-3 rounded-2xl bg-primary text-primary-foreground text-sm font-medium flex flex-col items-center gap-1"><Utensils className="size-4" /> Cook</button>
           <button onClick={() => setPlanOpen(true)} className="py-3 rounded-2xl bg-card text-sm font-medium flex flex-col items-center gap-1"><CalendarPlus className="size-4" /> Plan</button>
