@@ -77,11 +77,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "MealMate — Cook more, waste less" },
       { name: "description", content: "Track your kitchen, plan meals, and cut food waste with smart recipes." },
       { name: "author", content: "MealMate" },
-      { property: "og:title", content: "MealMate" },
-      { property: "og:description", content: "Cook more, waste less." },
+      { property: "og:title", content: "MealMate — Cook more, waste less" },
+      { property: "og:description", content: "Track your kitchen, plan meals, and cut food waste with smart recipes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "MealMate — Cook more, waste less" },
+      { name: "twitter:description", content: "Track your kitchen, plan meals, and cut food waste with smart recipes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/aee3df43-1a15-4c89-bb80-20ac41747550/id-preview-7d2532dc--3f03f791-eee9-411f-8444-ec2f13372b9b.lovable.app-1778460814273.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/aee3df43-1a15-4c89-bb80-20ac41747550/id-preview-7d2532dc--3f03f791-eee9-411f-8444-ec2f13372b9b.lovable.app-1778460814273.png" },
     ],
     links: [
       {
