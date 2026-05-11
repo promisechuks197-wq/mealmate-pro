@@ -31,7 +31,19 @@ function Recipes() {
   const [q, setQ] = useState("");
   const recipesQ = useQuery({
     queryKey: ["recipes-list"],
-    queryFn: async () => (await (supabase as any).from("recipes").select("id, title, image_url, prep_time_minutes, tags, meal_type, difficulty, spice_level, recipe_ingredients(item_name), reviews(rating)")).data ?? [],
+    queryFn: async () => (await supabase.from("recipes").select("id, title, image_url, prep_time_minutes, tags, meal_type, difficulty, spice_level, recipe_ingredients(item_name)")).data ?? [],
+  });
+  const reviewsQ = useQuery({
+    queryKey: ["all-review-ratings"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("reviews").select("recipe_id, rating");
+      const map = new Map<string, { sum: number; n: number }>();
+      for (const r of (data ?? []) as { recipe_id: string; rating: number }[]) {
+        const cur = map.get(r.recipe_id) ?? { sum: 0, n: 0 };
+        cur.sum += r.rating; cur.n += 1; map.set(r.recipe_id, cur);
+      }
+      return map;
+    },
   });
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -81,7 +93,12 @@ function Recipes() {
         <div className="grid grid-cols-2 gap-3">
           {list.map((r: any) => (
             <Link key={r.id} to="/recipes/$id" params={{ id: r.id }} className="group block">
-              <DishThumb title={r.title} image={r.image_url} mealType={r.meal_type} reviews={r.reviews ?? []} />
+              <DishThumb
+                title={r.title}
+                image={r.image_url}
+                mealType={r.meal_type}
+                avg={(() => { const a = reviewsQ.data?.get(r.id); return a ? a.sum / a.n : 0; })()}
+              />
               <div className="mt-1.5 text-[11px] text-muted-foreground flex items-center gap-2 px-1">
                 <span className="inline-flex items-center gap-0.5"><Clock className="size-3" /> {r.prep_time_minutes}m</span>
                 <span className="inline-flex items-center gap-0.5"><Flame className="size-3" /> {r.spice_level}</span>
@@ -94,9 +111,8 @@ function Recipes() {
   );
 }
 
-function DishThumb({ title, image, mealType, reviews }: { title: string; image?: string | null; mealType?: string | null; reviews?: { rating: number }[] }) {
+function DishThumb({ title, image, mealType, avg }: { title: string; image?: string | null; mealType?: string | null; avg: number }) {
   const [failed, setFailed] = useState(!image);
-  const avg = reviews && reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   return (
     <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary to-secondary shadow-sm">
       {!failed && image && (
