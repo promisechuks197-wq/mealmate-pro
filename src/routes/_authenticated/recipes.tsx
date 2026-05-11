@@ -74,30 +74,47 @@ function Recipes() {
             className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap capitalize ${spice === s ? "bg-secondary text-secondary-foreground" : "bg-muted"}`}>{s === "any" ? "Any spice" : s}</button>
         ))}
       </div>
-      <div className="px-5 mt-3 space-y-3">
+      <div className="px-5 mt-3">
         {recipesQ.isLoading && <div className="text-sm text-muted-foreground">Loading…</div>}
         {!recipesQ.isLoading && list.length === 0 && <div className="bg-card rounded-3xl p-8 text-center text-muted-foreground text-sm">No dishes match these filters.</div>}
-        {list.map((r: any) => (
-          <Link key={r.id} to="/recipes/$id" params={{ id: r.id }} className="block bg-card rounded-3xl overflow-hidden">
-            {r.image_url ? (
-              <img src={r.image_url} alt={r.title} className="w-full h-40 object-cover" loading="lazy" />
-            ) : (
-              <div className="w-full h-32 bg-gradient-to-br from-primary/20 to-secondary/20 grid place-items-center text-4xl">🍲</div>
-            )}
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="font-serif text-lg leading-tight">{r.title}</h3>
-                {r.meal_type && <span className="shrink-0 text-xs font-semibold px-2 py-1 rounded-full bg-secondary text-secondary-foreground capitalize">{r.meal_type}</span>}
+        <div className="grid grid-cols-2 gap-3">
+          {list.map((r: any) => (
+            <Link key={r.id} to="/recipes/$id" params={{ id: r.id }} className="group block">
+              <DishThumb title={r.title} image={r.image_url} mealType={r.meal_type} />
+              <div className="mt-1.5 text-[11px] text-muted-foreground flex items-center gap-2 px-1">
+                <span className="inline-flex items-center gap-0.5"><Clock className="size-3" /> {r.prep_time_minutes}m</span>
+                <span className="inline-flex items-center gap-0.5"><Flame className="size-3" /> {r.spice_level}</span>
               </div>
-              <div className="text-xs text-muted-foreground mt-1 flex items-center gap-3 flex-wrap">
-                <span className="inline-flex items-center gap-1"><Clock className="size-3" /> {r.prep_time_minutes} min</span>
-                <span>· {r.difficulty}</span>
-                <span className="inline-flex items-center gap-1"><Flame className="size-3" /> {r.spice_level}</span>
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
     </>
+  );
+}
+
+function DishThumb({ title, image, mealType }: { title: string; image?: string | null; mealType?: string | null }) {
+  const [failed, setFailed] = useState(!image);
+  return (
+    <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary to-secondary shadow-sm">
+      {!failed && image && (
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+      {mealType && (
+        <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-background/85 text-foreground capitalize">
+          {mealType}
+        </span>
+      )}
+      <div className="absolute inset-x-0 bottom-0 p-3">
+        <h3 className="font-serif text-base leading-tight text-white drop-shadow">{title}</h3>
+      </div>
+    </div>
   );
 }
