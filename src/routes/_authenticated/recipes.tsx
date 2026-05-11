@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScreenHeader } from "@/components/MobileShell";
 import { Clock, Flame, Search } from "lucide-react";
+import { Stars } from "@/components/StarRating";
 
 export const Route = createFileRoute("/_authenticated/recipes")({ component: Recipes });
 
@@ -30,7 +31,7 @@ function Recipes() {
   const [q, setQ] = useState("");
   const recipesQ = useQuery({
     queryKey: ["recipes-list"],
-    queryFn: async () => (await supabase.from("recipes").select("id, title, image_url, prep_time_minutes, tags, meal_type, difficulty, spice_level, recipe_ingredients(item_name)")).data ?? [],
+    queryFn: async () => (await (supabase as any).from("recipes").select("id, title, image_url, prep_time_minutes, tags, meal_type, difficulty, spice_level, recipe_ingredients(item_name), reviews(rating)")).data ?? [],
   });
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -80,7 +81,7 @@ function Recipes() {
         <div className="grid grid-cols-2 gap-3">
           {list.map((r: any) => (
             <Link key={r.id} to="/recipes/$id" params={{ id: r.id }} className="group block">
-              <DishThumb title={r.title} image={r.image_url} mealType={r.meal_type} />
+              <DishThumb title={r.title} image={r.image_url} mealType={r.meal_type} reviews={r.reviews ?? []} />
               <div className="mt-1.5 text-[11px] text-muted-foreground flex items-center gap-2 px-1">
                 <span className="inline-flex items-center gap-0.5"><Clock className="size-3" /> {r.prep_time_minutes}m</span>
                 <span className="inline-flex items-center gap-0.5"><Flame className="size-3" /> {r.spice_level}</span>
@@ -93,8 +94,9 @@ function Recipes() {
   );
 }
 
-function DishThumb({ title, image, mealType }: { title: string; image?: string | null; mealType?: string | null }) {
+function DishThumb({ title, image, mealType, reviews }: { title: string; image?: string | null; mealType?: string | null; reviews?: { rating: number }[] }) {
   const [failed, setFailed] = useState(!image);
+  const avg = reviews && reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
   return (
     <div className="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary to-secondary shadow-sm">
       {!failed && image && (
@@ -110,6 +112,11 @@ function DishThumb({ title, image, mealType }: { title: string; image?: string |
       {mealType && (
         <span className="absolute top-2 left-2 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-background/85 text-foreground capitalize">
           {mealType}
+        </span>
+      )}
+      {avg > 0 && (
+        <span className="absolute top-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-background/85 text-foreground">
+          <Stars value={avg} size={10} /> {avg.toFixed(1)}
         </span>
       )}
       <div className="absolute inset-x-0 bottom-0 p-3">
